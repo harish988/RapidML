@@ -1,0 +1,103 @@
+<html> 
+    <head>
+      <title>AutoML</title>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+      <script src="http://code.jquery.com/jquery-latest.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+      <script>
+        jQuery(document).delegate('a.add-record', 'click', function(e) {
+            e.preventDefault();    
+            var content = jQuery('#sample_table tr'),
+            size = jQuery('#tbl_posts >tbody >tr').length + 1,
+            element = null,    
+            element = content.clone();
+            element.attr('id', 'rec-'+size);
+            element.find('.delete-record').attr('data-id', size);
+            element.appendTo('#tbl_posts_body');
+            element.find('.sn').html(size);
+          });
+        
+        jQuery(document).delegate('a.delete-record', 'click', function(e) {
+            e.preventDefault();    
+            var didConfirm = confirm("Are you sure You want to delete");
+            if (didConfirm == true) {
+              var id = jQuery(this).attr('data-id');
+              var targetDiv = jQuery(this).attr('targetDiv');
+              jQuery('#rec-' + id).remove();
+              
+            $('#tbl_posts_body tr').each(function(index) {
+              $(this).find('span.sn').html(index+1);
+            });
+            return true;
+          } else {
+            return false;
+          }
+        });
+        </script>
+    </head>
+    <body>
+      <center>
+        <h2> Auto ML </h2>
+      </center>
+
+      <form method="post" enctype="multipart/form-data" action="/preprocess/">
+        {% csrf_token %}
+        <br>
+        Upload: <input type="file" name="myfile">
+        <button type="submit">Upload</button>
+      </form>
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="/preprocess">Preprocessing</a></li>
+        <li><a href="/train">Model Training</a></li>
+        <li><a href="/tune">Hyper Parameter Tuning</a></li>
+        <li><a href="/visualise">Visualisation</a></li>
+        <li><a href="/predict">Predict</a></li>
+        <li><a href="/deploy">Download/Deploy</a></li>	
+	    </ul>
+    <form>
+        <table class="table table-bordered" id="tbl_posts">
+        <thead>
+          <tr>
+            <th>S.No</th>
+            <th>Column</th>
+            <th>Replace With</th>
+          </tr>
+        </thead>
+        <tbody id="tbl_posts_body">
+          <tr id="rec-1">
+            <td><span class="sn">1</span></td>
+            <td class="ui-widget"><input type="text" class="columnName search" name="columnName"/></td>
+            <td class="ui-widget"><select class="custom-select custom-select-sm" class="replace" name="replace">
+                <option selected>Select One</option>
+                <option value="1">Mean</option>
+                <option value="2">Median</option>
+                <option value="3"><input type="text" /></option>
+              </select></td>
+            <td><a class="btn btn-primary delete-record" data-id="1"><i class="glyphicon glyphicon-trash"></i></a></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="well clearfix">
+            <a class="btn btn-primary pull-right add-record" data-added="0"><i class="glyphicon glyphicon-plus"></i> Add Row</a>
+      </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" value="Train Your Model" onclick="javascript: form.action='saleOrder';" class="btn btn-info"/>
+    </form>
+  
+  <div style="display:none;">
+    <table id="sample_table">
+      <tr id="">
+        <td><span class="sn"></span></td>
+        <td class="ui-widget"><input type="text" class="columnName search" name="columnName"/></td>
+        <td class="ui-widget"><select  class="replace" name="replace">
+                <option selected>Select One</option>
+                <option value="1">Mean</option>
+                <option value="2">Median</option>
+                <option><input type="text" /></option>
+              </select></td>       	
+        <td><a class="btn btn-primary delete-record" data-id="0"><i class="glyphicon glyphicon-trash"></i></a></td>
+     </tr>
+   </table>
+ </div>
+
+    </body>
+  </html>
